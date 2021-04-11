@@ -19,6 +19,10 @@ static const char *fragmentShaderSource =
 
 static constexpr auto scaler  = 1.0 / 255.0;
 
+static auto x_offset = 0.2f;
+static auto y_offset = 0.2f;
+static auto z_offset = -0.2f;
+
 void CubeWindow::initialize()
 {
     m_program = new QOpenGLShaderProgram(this);
@@ -31,14 +35,28 @@ void CubeWindow::initialize()
     Q_ASSERT(m_colorAttr != -1);
     m_matrixUniform = m_program->uniformLocation("matrix");
     Q_ASSERT(m_matrixUniform != -1);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glClearDepth(1.0f);
+
+    cubes.emplace_back(x_offset, y_offset, z_offset);
+
+    x_offset += 1.0f;
+    y_offset += 1.0f;
+    z_offset -= 1.0f;
+
+    cubes.emplace_back(x_offset, y_offset, z_offset);
 }
 
 int x_coord = 0;
+int y_coord = 0;
 bool pressed = false;
 
 void CubeWindow::mouseMoveEvent(QMouseEvent *event) {
     if(pressed) {
         x_coord = event->x();
+        y_coord = event->y();
     }
 }
 
@@ -58,81 +76,30 @@ void CubeWindow::render()
     glViewport(0, 0, width() * retinaScale, height() * retinaScale);
 
     glClearColor(0x7F * scaler, 0x7C * scaler, 0xCC * scaler, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_program->bind();
 
     QMatrix4x4 matrix;
-    matrix.perspective(60.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    matrix.translate(-0.3, 0.2, -2);
+    matrix.perspective(60.0f, 4.0f / 3.0f, 1.0f, 100.0f);
+    matrix.translate(0, 0.2, -3);
     matrix.rotate(25.0f * x_coord / screen()->refreshRate(), 0, 1, 0);
+    matrix.rotate(25.0f * y_coord / screen()->refreshRate(), -1, 0, 0);
 
     m_program->setUniformValue(m_matrixUniform, matrix);
 
-    static const GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.5f,
-         0.5f, -0.5f, 0.5f,
-         0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f,
-         0.5f, 0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, 0.5f, -0.5f,
-         0.5f, 0.5f, 0.5f,
-         0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-         0.5f, 0.5f, 0.5f,
-         0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, 0.5f
-    };
+    for (const auto& cube : cubes) {
+        glVertexAttribPointer(m_posAttr, 3, GL_FLOAT, GL_FALSE, 0, cube.getVertices());
+        glVertexAttribPointer(m_colorAttr, 3, GL_FLOAT, GL_FALSE, 0, cube.getColors());
 
-    static const GLfloat colors[] = {
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f
-    };
+        glEnableVertexAttribArray(m_posAttr);
+        glEnableVertexAttribArray(m_colorAttr);
 
-    glVertexAttribPointer(m_posAttr, 3, GL_FLOAT, GL_FALSE, 0, vertices);
-    glVertexAttribPointer(m_colorAttr, 3, GL_FLOAT, GL_FALSE, 0, colors);
+        glDrawArrays(GL_QUADS, 0, 24);
 
-    glEnableVertexAttribArray(m_posAttr);
-    glEnableVertexAttribArray(m_colorAttr);
-
-    glDrawArrays(GL_QUADS, 0, 24);
-
-    glDisableVertexAttribArray(m_colorAttr);
-    glDisableVertexAttribArray(m_posAttr);
+        glDisableVertexAttribArray(m_colorAttr);
+        glDisableVertexAttribArray(m_posAttr);
+    }
 
     m_program->release();
 

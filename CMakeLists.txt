@@ -29,6 +29,8 @@ trianglewindow.cpp
 trianglewindow.h
 cubewindow.cpp
 cubewindow.h
+cube.h
+cube.cpp
 )
 
 target_link_libraries(sample PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

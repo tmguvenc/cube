@@ -4,6 +4,8 @@
 #include "openglwindow.h"
 #include <QOpenGLShaderProgram>
 #include <QScreen>
+#include "cube.h"
+#include <vector>
 
 class CubeWindow : public OpenGLWindow
 {
@@ -25,6 +27,8 @@ private:
 
     QOpenGLShaderProgram *m_program = nullptr;
     int m_frame = 0;
+
+    std::vector<Cube> cubes;
 };
 
 #endif // CUBEWINDOW_H

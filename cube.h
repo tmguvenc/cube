@@ -12,6 +12,9 @@ public:
 
     const GLfloat* getVertices() const;
     const GLfloat* getColors() const;
+    float getXOffset() const;
+    float getYOffset() const;
+    float getZOffset() const;
 
 private:
     const float xOffset;

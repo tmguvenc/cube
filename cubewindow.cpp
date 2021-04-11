@@ -1,5 +1,9 @@
 #include "cubewindow.h"
 #include <QMouseEvent>
+#include <random>
+
+std::random_device r;
+std::default_random_engine e1(r());
 
 static const char *vertexShaderSource =
     "attribute highp vec4 posAttr;\n"
@@ -19,9 +23,9 @@ static const char *fragmentShaderSource =
 
 static constexpr auto scaler  = 1.0 / 255.0;
 
-static auto x_offset = 0.2f;
-static auto y_offset = 0.2f;
-static auto z_offset = -0.2f;
+//static auto x_offset = 0.5f;
+//static auto y_offset = 0.5f;
+//static auto z_offset = -0.5f;
 
 void CubeWindow::initialize()
 {
@@ -39,14 +43,6 @@ void CubeWindow::initialize()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1.0f);
-
-    cubes.emplace_back(x_offset, y_offset, z_offset);
-
-    x_offset += 1.0f;
-    y_offset += 1.0f;
-    z_offset -= 1.0f;
-
-    cubes.emplace_back(x_offset, y_offset, z_offset);
 }
 
 int x_coord = 0;
@@ -68,6 +64,14 @@ void CubeWindow::mousePressEvent(QMouseEvent *event) {
 void CubeWindow::mouseReleaseEvent(QMouseEvent *event){
     Q_UNUSED(event);
     pressed = false;
+
+    std::uniform_real_distribution<float> uniform_dist(-1.0f, 1.0f);
+
+    const auto xOffset = uniform_dist(e1);
+    const auto yOffset = uniform_dist(e1);
+    const auto zOffset = uniform_dist(e1);
+
+    cubes.emplace_back(xOffset, yOffset, zOffset);
 }
 
 void CubeWindow::render()
@@ -80,15 +84,14 @@ void CubeWindow::render()
 
     m_program->bind();
 
-    QMatrix4x4 matrix;
-    matrix.perspective(60.0f, 4.0f / 3.0f, 1.0f, 100.0f);
-    matrix.translate(0, 0.2, -3);
-    matrix.rotate(25.0f * x_coord / screen()->refreshRate(), 0, 1, 0);
-    matrix.rotate(25.0f * y_coord / screen()->refreshRate(), -1, 0, 0);
-
-    m_program->setUniformValue(m_matrixUniform, matrix);
-
     for (const auto& cube : cubes) {
+        QMatrix4x4 matrix;
+        matrix.perspective(90.0f, 4.0f / 3.0f, 1.0f, 200.0f);
+        matrix.translate(cube.getXOffset(), 0.3 + cube.getYOffset(), -5 + cube.getZOffset());
+        matrix.rotate(45, 0, 1, 0);
+
+        m_program->setUniformValue(m_matrixUniform, matrix);
+
         glVertexAttribPointer(m_posAttr, 3, GL_FLOAT, GL_FALSE, 0, cube.getVertices());
         glVertexAttribPointer(m_colorAttr, 3, GL_FLOAT, GL_FALSE, 0, cube.getColors());
 

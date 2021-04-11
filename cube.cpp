@@ -88,3 +88,6 @@ const GLfloat* Cube::getColors() const {
     return colors;
 }
 
+float Cube::getXOffset() const { return xOffset; }
+float Cube::getYOffset() const { return yOffset; }
+float Cube::getZOffset() const { return zOffset; }

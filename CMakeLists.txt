@@ -25,8 +25,6 @@ mainwindow.h
 mainwindow.ui
 openglwindow.h
 openglwindow.cpp
-trianglewindow.cpp
-trianglewindow.h
 cubewindow.cpp
 cubewindow.h
 cube.h

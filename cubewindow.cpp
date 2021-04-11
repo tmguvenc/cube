@@ -23,10 +23,6 @@ static const char *fragmentShaderSource =
 
 static constexpr auto scaler  = 1.0 / 255.0;
 
-//static auto x_offset = 0.5f;
-//static auto y_offset = 0.5f;
-//static auto z_offset = -0.5f;
-
 void CubeWindow::initialize()
 {
     m_program = new QOpenGLShaderProgram(this);
@@ -65,6 +61,10 @@ void CubeWindow::mouseReleaseEvent(QMouseEvent *event){
     Q_UNUSED(event);
     pressed = false;
 
+    addCube();
+}
+
+void CubeWindow::addCube() {
     std::uniform_real_distribution<float> uniform_dist(-1.0f, 1.0f);
 
     const auto xOffset = uniform_dist(e1);
@@ -86,8 +86,8 @@ void CubeWindow::render()
 
     for (const auto& cube : cubes) {
         QMatrix4x4 matrix;
-        matrix.perspective(90.0f, 4.0f / 3.0f, 1.0f, 200.0f);
-        matrix.translate(cube.getXOffset(), 0.3 + cube.getYOffset(), -5 + cube.getZOffset());
+        matrix.perspective(90.0f, 4.0f / 3.0f, 1.0f, 100.0f);
+        matrix.translate(cube.getXOffset(), cube.getYOffset(), -5 + cube.getZOffset());
         matrix.rotate(45, 0, 1, 0);
 
         m_program->setUniformValue(m_matrixUniform, matrix);

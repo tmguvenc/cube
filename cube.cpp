@@ -2,9 +2,9 @@
 #include <cstring>
 
 Cube::Cube(const float xOffset, const float yOffset, const float zOffset)
-    : xOffset(xOffset)
-    , yOffset(yOffset)
-    , zOffset(zOffset)
+    : m_xOffset(xOffset)
+    , m_yOffset(yOffset)
+    , m_zOffset(zOffset)
 {
     const GLfloat vertices[] = {
         // FRONT
@@ -44,7 +44,7 @@ Cube::Cube(const float xOffset, const float yOffset, const float zOffset)
          0.5f + xOffset, -0.5f + yOffset,  0.5f + zOffset
     };
 
-    std::memcpy(this->vertices, vertices, sizeof(vertices));
+    std::memcpy(m_vertices, vertices, sizeof(vertices));
 
     const GLfloat colors[] = {
         1.0f, 0.0f, 0.0f,
@@ -73,7 +73,7 @@ Cube::Cube(const float xOffset, const float yOffset, const float zOffset)
         0.0f, 0.0f, 1.0f,
     };
 
-    std::memcpy(this->colors, colors, sizeof(colors));
+    std::memcpy(m_colors, colors, sizeof(colors));
 }
 
 void Cube::render() {
@@ -81,13 +81,13 @@ void Cube::render() {
 }
 
 const GLfloat* Cube::getVertices() const {
-    return vertices;
+    return m_vertices;
 }
 
 const GLfloat* Cube::getColors() const {
-    return colors;
+    return m_colors;
 }
 
-float Cube::getXOffset() const { return xOffset; }
-float Cube::getYOffset() const { return yOffset; }
-float Cube::getZOffset() const { return zOffset; }
+float Cube::getXOffset() const { return m_xOffset; }
+float Cube::getYOffset() const { return m_yOffset; }
+float Cube::getZOffset() const { return m_zOffset; }

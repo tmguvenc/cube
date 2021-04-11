@@ -17,12 +17,12 @@ public:
     float getZOffset() const;
 
 private:
-    const float xOffset;
-    const float yOffset;
-    const float zOffset;
+    const float m_xOffset;
+    const float m_yOffset;
+    const float m_zOffset;
 
-    GLfloat vertices[72];
-    GLfloat colors[72];
+    GLfloat m_vertices[72];
+    GLfloat m_colors[72];
 };
 
 #endif // CUBE_H

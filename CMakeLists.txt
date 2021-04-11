@@ -20,9 +20,6 @@ include_directories(${OPENGL_INCLUDE_DIR})
 
 add_executable(sample
 main.cpp
-mainwindow.cpp
-mainwindow.h
-mainwindow.ui
 openglwindow.h
 openglwindow.cpp
 cubewindow.cpp

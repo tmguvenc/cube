@@ -23,9 +23,15 @@ static const char *fragmentShaderSource =
 
 static constexpr auto scaler  = 1.0 / 255.0;
 
+CubeWindow::~CubeWindow() {
+    if( m_program ) {
+        m_program->deleteLater();
+    }
+}
+
 void CubeWindow::initialize()
 {
-    m_program = new QOpenGLShaderProgram(this);
+    m_program = new QOpenGLShaderProgram;
     m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
     m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
     m_program->link();
@@ -76,8 +82,8 @@ void CubeWindow::addCube() {
 
 void CubeWindow::render()
 {
-    const qreal retinaScale = devicePixelRatio();
-    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
+    const qreal retinaScale = OpenGLWindow::devicePixelRatio();
+    glViewport(0, 0, OpenGLWindow::width() * retinaScale, OpenGLWindow::height() * retinaScale);
 
     glClearColor(0x7F * scaler, 0x7C * scaler, 0xCC * scaler, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -86,7 +92,7 @@ void CubeWindow::render()
 
     for (const auto& cube : cubes) {
         QMatrix4x4 matrix;
-        matrix.perspective(90.0f, 4.0f / 3.0f, 1.0f, 100.0f);
+        matrix.perspective(75.0f, 4.0f / 3.0f, 1.0f, 100.0f);
         matrix.translate(cube.getXOffset(), cube.getYOffset(), -5 + cube.getZOffset());
         matrix.rotate(45, 0, 1, 0);
 

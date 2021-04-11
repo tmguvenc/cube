@@ -3,13 +3,21 @@
 
 #include "openglwindow.h"
 #include <QOpenGLShaderProgram>
+#include <QMainWindow>
 #include <QScreen>
 #include "cube.h"
 #include <vector>
 
+
 class CubeWindow : public OpenGLWindow
 {
 public:
+//    CubeWindow(QWidget* parent = nullptr) : QWidget(parent) {
+
+//    }
+
+    ~CubeWindow();
+
     using OpenGLWindow::OpenGLWindow;
 
     void initialize() override;

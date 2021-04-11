@@ -1,5 +1,6 @@
 #include "openglwindow.h"
 #include <QPainter>
+#include <QToolBar>
 
 OpenGLWindow::OpenGLWindow(QWindow *parent)
     : QWindow(parent)
@@ -8,7 +9,6 @@ OpenGLWindow::OpenGLWindow(QWindow *parent)
 }
 
 OpenGLWindow::~OpenGLWindow() {
-
 }
 
 void OpenGLWindow::render(QPainter *painter)

@@ -1,5 +1,4 @@
 #include<stdio.h>
-#include "mainwindow.h"
 #include <qguiapplication.h>
 #include <QSurfaceFormat>
 #include "cubewindow.h"
